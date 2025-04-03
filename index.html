@@ -1,0 +1,588 @@
+
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <script type="module" src="./dist/clock-timepicker.js"></script>
+  <style type="text/css">
+    body {
+      font-family: Arial;
+      text-align: center;
+      padding: 0px;
+      padding-bottom: 50px;
+      margin: 0px;
+      background: #fafafa;
+    }
+
+    div.content {
+        max-width: 900px;
+        margin: 0px auto;
+    }
+
+    h1 {
+      background: #0797ff;
+      color: #fff;
+      margin: 0px 0px 30px 0px;
+      padding: 20px 0px;
+    }
+
+    h2 {
+      margin: 0px 0px 15px 0px;
+      padding-top: 10px;
+    }
+
+    a {
+      color: #0797ff;
+    }
+
+    em {
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    code {
+      display: block;
+      text-align: left;
+      margin: 10px auto 20px auto;
+      background: #f3f3f3;
+      font-size: 14px;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+
+    span.code {
+      font-family: Consolas;
+      font-size: 14px;
+      color: purple;
+    }
+
+    div.paragraph {
+      font-size: 16px;
+      line-height: 22px;
+      padding: 0px 10px;
+    }
+
+    div.spacer {
+      width: 50px;
+      height: 1px;
+      background: #bbb;
+      margin: 40px auto;
+    }
+
+    table {
+      margin: 0px auto;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      border-spacing: 0px;
+      border-collapse: separate;
+    }
+
+    td, th {
+      text-align: left;
+      padding: 3px 20px;
+      vertical-align: top;
+      max-width: 300px;
+    }
+
+    th {
+        border-bottom: 1px solid #ddd;
+    }
+
+    tr:nth-child(2n+1) {
+      background: #f2f2f2;
+    }
+
+    input {
+      padding: 3px 10px;
+      border: 1px solid #bbb;
+      outline: 0;
+      border-radius: 5px;
+      font-size: 18px;
+      display: inline-block;
+      font-size: 26px;
+      padding: 5px;
+      width: 94px;
+      text-align: center;
+      margin-top: 5px;
+    }
+
+      input:focus {
+        border: 1px solid rgba(0, 123, 255, .5);
+        box-shadow: 0 0 2px 1px #0797ff;
+      }
+
+      input::selection {
+        color: #fff;
+        background: #0797ff;
+      }
+
+    clock-timepicker {
+      --clock-timepicker-accent-color: #0797ff;
+      --clock-timepicker-cursor: default;
+      --clock-timepicker-button-background: inherit;
+      --clock-timepicker-button-border: none;
+      --clock-timepicker-button-color: inherit;
+      --clock-timepicker-button-cancel: Cancel;
+      --clock-timepicker-button-cancel-color: inherit;
+      --clock-timepicker-button-font-size: 20px;
+      --clock-timepicker-button-gap: 30px;
+      --clock-timepicker-button-ok: OK;
+      --clock-timepicker-button-ok-color: inherit;
+      --clock-timepicker-button-outline: none;
+      --clock-timepicker-button-padding: none;
+      --clock-timepicker-button-shadow: none;
+      --clock-timepicker-face-color: #eeeeee;
+      --clock-timepicker-face-hover-color: #dddddd;
+      --clock-timepicker-face-selection-color: inherit;
+      --clock-timepicker-font-family: Arial;
+      --clock-timepicker-header-background: inherit;
+      --clock-timepicker-header-font-color: #ffffff;
+      --clock-timepicker-header-font-size: 40px;
+      --clock-timepicker-header-selection-background: rgba(255, 255, 255, 0.6);
+      --clock-timepicker-inner-numbers-color: #888888;
+      --clock-timepicker-outer-numbers-color: #000000;
+      --clock-timepicker-popup-background: #ffffff;
+      --clock-timepicker-popup-border: none;
+      --clock-timepicker-popup-border-radius: 5px;
+      --clock-timepicker-popup-shadow: rgba(0, 0, 0, 0.14) 0px 4px 20px 0px;
+      --clock-timepicker-popup-size: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>clock-timepicker 1.0.0</h1>
+  <div class="content">
+    <div class="paragraph">
+      The <span class="code">&lt;clock-timepicker&gt;</span> is a simple and lightweight <em>Web Component</em> that allows you to pick a time or duration from a clock face. It is easy to use and <a href="#options">fully customizable</a>.<br /><br />
+      Example:<br />
+      <clock-timepicker required autosize value="14:00"></clock-timepicker><br />
+      Find <a href="#examples">more examples</a> on the bottom of this page.
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      <h2>Browser support</h2>
+      All major browsers are supported.
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      <h2>Device support</h2>
+      Both desktop and mobile devices are supported.<br />On mobile devices, the time picker will be displayed as a popup in a bigger size so touch input is easier.
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      <h2>No dependencies</h2>
+      The <span class="code">&lt;clock-timepicker&gt;</span> has no dependencies at all. It is pure javascript (ES6 / ECMAScript 2015).<br />You can use it on any platform, on any OS, with any framework.
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      <h2>TypeScript support</h2>
+      The <span class="code">&lt;clock-timepicker&gt;</span> publishes its type definitions so you can use it in TypeScript with strict types and auto completion.
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      <h2>Styling</h2>
+      The <span class="code">&lt;clock-timepicker&gt;</span> popup can be individually styled with CSS variables.<br />
+      With the CSS variable <span class="code">--clock-timepicker-accent-color</span> you can give your timpicker quickly your own accent,<br />
+      but there are a lot more <a href="#css-variables">CSS variables</a> that you can use to adjust the timepicker to your own style.
+      <code>
+        clock-timepicker {<br />
+        &nbsp;&nbsp;&nbsp;--clock-timepicker-accent-color: purple;<br />
+        }
+      </code>
+      The <span class="code">&lt;clock-timepicker&gt;</span> uses an <span class="code">&lt;input&gt;</span> element which is not put into shadow DOM to use your default styling.<br />All other HTML elements and CSS styles (that are responsible for the popup) are hold in the shadow DOM for not interfering with your own styles or any other libraries.
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      <h2>Internationalization (I18n)</h2>
+      Internationalization of the two buttons ("OK" and "Cancel") is achieved by adjusting the CSS variables<br /><span class="code">--clock-timepicker-button-ok</span> and <span class="code">--clock-timepicker-button-cancel</span>.<br />See <a href="#css-variables">CSS variables</a>.
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      <h2>Keyboard support</h2>
+      The <span class="code">&lt;clock-timepicker&gt;</span> allows you to enter time/duration easily with the <a href="#keys">keyboard</a>,<br />navigate between time parts and escape to restore the previous value.
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      <h2>Installation</h2>
+      The <span class="code">&lt;clock-timepicker&gt;</span> can be easily installed from <a href="https://www.npmjs.com/package/clock-timepicker" target="_blank">NPM</a>.
+      <code>npm install <strong>clock-timepicker</strong></code><br />
+      or you can <a href="dist/clock-timepicker.js" target="_blank">download it</a> and directly reference it in your HTML file:<br />
+      <code>&lt;script type="module" src="clock-timepicker.js"&gt;&lt;/script&gt;</code>
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      <h2>Usage</h2>
+      Just insert the following code into your HTML:
+      <code>&lt;clock-timepicker&gt;&lt;clock-timepicker&gt;</code><br />
+      To customize the timepicker, you can set the <a href="#options">options</a> with HTML attributes.
+      <code>&lt;clock-timepicker required value="08:00" precision="5"&gt;&lt;clock-timepicker&gt;</code><br />
+      In certain frameworks (as Angular or React) it's important to use a own <span class="code">&lt;input&gt;</span> element,<br />which you can i.e. bind to a form or a reactive property.<br />
+      In that case enclose your <span class="code">&lt;input&gt;</span> in the <span class="code">&lt;clock-timepicker&gt;</span> element:
+      <code>&lt;clock-timepicker&gt;<br />&nbsp;&nbsp;&nbsp;&lt;input [(ngModel)]="value" /&gt;<br />&lt;clock-timepicker&gt;</code><br />
+    </div>
+    <div class="spacer"></div>
+    <a name="options"></a>
+    <div class="paragraph">
+      <h2>Options</h2>
+      You can set the options with attributes on the <span class="code">&lt;clock-timepicker&gt;</span> element<br />
+      or pass it in a configuration object to the constructor.<br /><br />
+      The following options are available:<br /><br />
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>animationDuration</td>
+          <td><span class="code">300</span></td>
+          <td>The duration in milliseconds for switching between time parts.</td>
+        </tr>
+        <tr>
+          <td>autosize</td>
+          <td><span class="code">false</span></td>
+          <td>Set to true if the input should be automatically adjusted in size to fit its content.</td>
+        </tr>
+        <tr>
+          <td>format</td>
+          <td><span class="code">'HH:mm'</span></td>
+          <td>
+            The format used for the time also defines the time parts to be shown.<br /><br />
+            <span class="code">HH</span>, <span class="code">H</span>, <span class="code">hh</span> or <span class="code">h</span> is used for the hours.<br />
+            <span class="code">mm</span> or <span class="code">m</span> is used for the minutes.<br />
+            <span class="code">ss</span> or <span class="code">s</span> is used for the seconds.<br /><br />
+            Possible formats:
+            <ul>
+              <li><span class="code">'HH:mm'</span> (24-hours, always two digits)</li>
+              <li><span class="code">'H:mm'</span> (24-hours)</li>
+              <li><span class="code">'hh:mm'</span> (12-hours, always two digits)</li>
+              <li><span class="code">'h:mm'</span> (12-hours)</li>
+              <li><span class="code">'HH:mm:ss'</span></li>
+              <li><span class="code">'H:mm:ss'</span></li>
+              <li><span class="code">'hh:mm:ss'</span></li>
+              <li><span class="code">'h:mm:ss'</span></li>
+              <li><span class="code">'mm:ss'</span></li>
+              <li><span class="code">'m:ss'</span></li>
+              <li><span class="code">'HH'</span></li>
+              <li><span class="code">'H'</span></li>
+              <li><span class="code">'hh'</span></li>
+              <li><span class="code">'h'</span></li>
+              <li><span class="code">'mm'</span></li>
+              <li><span class="code">'m'</span></li>
+              <li><span class="code">'ss'</span></li>
+              <li><span class="code">'s'</span></li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td>maximum</td>
+          <td><span class="code">null</span></td>
+          <td>The maximum time/duration that can be selected.</td>
+        </tr>
+        <tr>
+          <td>minimum</td>
+          <td><span class="code">null</span></td>
+          <td>The minimum time/duration that can be selected.</td>
+        </tr>
+        <tr>
+          <td>precision</td>
+          <td><span class="code">1</span></td>
+          <td>The precision.</td>
+        </tr>
+        <tr>
+          <td>required</td>
+          <td><span class="code">false</span></td>
+          <td>If set to true the input always has a value.</td>
+        </tr>
+        <tr>
+          <td>separator</td>
+          <td><span class="code">':'</span></td>
+          <td>The separator used to separate the time parts.</td>
+        </tr>
+        <tr>
+          <td>usePlusSign</td>
+          <td><span class="code">false</span></td>
+          <td>If you use the clock-timepicker as a duration picker with negative durations, it can make sense to show a plus sign for positive durations.</td>
+        </tr>
+        <tr>
+          <td>value</td>
+          <td><span class="code">null</span></td>
+          <td>Sets the initial time.</td>
+        </tr>
+        <tr>
+          <td>vibrate</td>
+          <td><span class="code">true</span></td>
+          <td>If turned on the timepicker issues haptic feedback when interacting with it.</td>
+        </tr>
+      </table>
+    </div>
+    <div class="spacer"></div>
+    <a name="css-variables"></a>
+    <div class="paragraph">
+      <h2>CSS Variables</h2>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-accent-color</td>
+          <td><span class="code">#0797ff</span></td>
+          <td>The accent color defines the main color of the timepicker.<br />This color is also a fallback for the header background, face selection color and <span class="code">--clock-timepicker-button-color</span> if those are not specified.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-cursor</td>
+          <td><span class="code">default</span></td>
+          <td>The mouse's cursor style (desktop version).</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-background</td>
+          <td><span class="code">none</span></td>
+          <td>The background color of the buttons.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-border</td>
+          <td><span class="code">none</span></td>
+          <td>The border of the buttons.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-color</td>
+          <td><span class="code">inherit</span></td>
+          <td>The text color of the buttons.<br />If not specified, uses the <span class="code">--clock-timepicker-accent-color</span> as a fallback.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-cancel</td>
+          <td><span class="code">Cancel</span></td>
+          <td>The text of the cancel button.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-cancel-color</td>
+          <td><span class="code">inherit</span></td>
+          <td>The text color of the cancel button.<br />If not specified, uses the <span class="code">--clock-timepicker-button-color</span> as a fallback.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-font-size</td>
+          <td><span class="code">20px</span></td>
+          <td>The font color of the buttons.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-gap</td>
+          <td><span class="code">30px</span></td>
+          <td>The gap between the buttons.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-ok</td>
+          <td><span class="code">OK</span></td>
+          <td>The text of the OK button.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-ok-color</td>
+          <td><span class="code">inherit</span></td>
+          <td>The text color of the OK button.<br />If not specified, uses the <span class="code">--clock-timepicker-button-color</span> as a fallback.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-outline</td>
+          <td><span class="code">none</span></td>
+          <td>The outline of the buttons.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-padding</td>
+          <td><span class="code">none</span></td>
+          <td>The padding of the buttons.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-button-shadow</td>
+          <td><span class="code">none</span></td>
+          <td>The shadow of the buttons.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-face-color</td>
+          <td><span class="code">#eeeeee</span></td>
+          <td>The color of the clock face.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-face-hover-color</td>
+          <td><span class="code">#dddddd</span></td>
+          <td>The circle color when hovering over a number in the clock face.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-face-selection-color</td>
+          <td><span class="code">inherit</span></td>
+          <td>The circle color of a selected number in the clock face.<br />If not specified, uses the <span class="code">--clock-timepicker-accent-color</span> as a fallback.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-font-family</td>
+          <td><span class="code">Arial</span></td>
+          <td>The font family of the timepicker.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-header-background</td>
+          <td><span class="code">inherit</span></td>
+          <td>The background color of the header. (mobile version)<br />If not specified, uses the <span class="code">--clock-timepicker-accent-color</span> as a fallback.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-header-font-color</td>
+          <td><span class="code">#ffffff</span></td>
+          <td>The font color of the header. (mobile version)</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-header-font-size</td>
+          <td><span class="code">40px</span></td>
+          <td>The font size of the header. (mobile version)</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-header-selection-background</td>
+          <td><span class="code">rgba(255, 255, 255, 0.6)</span></td>
+          <td>The background of the time part selected in the header. (mobile version)</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-inner-numbers-color</td>
+          <td><span class="code">#888888</span></td>
+          <td>The color of the numbers in the clock face's inner circle.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-outer-numbers-color</td>
+          <td><span class="code">#000000</span></td>
+          <td>The color of the numbers in the clock face's outer circle.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-popup-background</td>
+          <td><span class="code">#ffffff</span></td>
+          <td>The background color of the popup.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-popup-border</td>
+          <td><span class="code">none</span></td>
+          <td>The border of the popup.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-popup-border-radius</td>
+          <td><span class="code">5px</span></td>
+          <td>The border radius of the popup.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-popup-shadow</td>
+          <td><span class="code">rgba(0, 0, 0, 0.14) 0px 4px 20px 0px</span></td>
+          <td>The shadow of the popup.</td>
+        </tr>
+        <tr>
+          <td>--clock-timepicker-popup-size</td>
+          <td><span class="code">200px</span></td>
+          <td>The size of the popup. (desktop version)</td>
+        </tr>
+      </table>
+    </div>
+    <div class="spacer"></div>
+    <a name="keys"></a>
+    <div class="paragraph">
+      <h2>Keyboard inputs</h2>
+      <table>
+        <tr>
+          <th>Key</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>Enter</td>
+          <td>Closes the popup and keeps the selected value.</td>
+        </tr>
+        <tr>
+          <td>Escape</td>
+          <td>Closes the popup and restores the previous value.</td>
+        </tr>
+        <tr>
+          <td>ArrowLeft</td>
+          <td>Navigates to the previous time part.</td>
+        </tr>
+        <tr>
+          <td>ArrowRight</td>
+          <td>Navigates to the next time part.</td>
+        </tr>
+        <tr>
+          <td>ArrowUp</td>
+          <td>Increments the current selected time part.</td>
+        </tr>
+        <tr>
+          <td>ArrowDown</td>
+          <td>Decrements the current selected time part.</td>
+        </tr>
+        <tr>
+          <td>Backspace<br />Delete</td>
+          <td>Sets the selected time part to zero or removes time completely if time is 00:00 and option <span class="code">required</span> is not set.</td>
+        </tr>
+        <tr>
+          <td>[0-9]</td>
+          <td>You can enter the digits directly by keyboard.<br />The timepicker automatically jumps to the next time part or closes the popup when the maximum value is reached.</td>
+        </tr>
+        <tr>
+          <td><span class="code">separator</span></td>
+          <td>Navigates to the next time part or closes the popup if last time part is reached.</td>
+        </tr>
+        <tr>
+          <td>+</td>
+          <td>Sets the time to positive (only supported if <span class="code">minimum</span> or <span class="code">maximum</span> is set to a negative value).</td>
+        </tr>
+        <tr>
+          <td>-</td>
+          <td>Sets the time to negative (only supported if <span class="code">minimum</span> or <span class="code">maximum</span> is set to a negative value).</td>
+        </tr>
+      </table>
+    </div>
+    <div class="spacer"></div>
+    <a name="examples"></a>
+    <div class="paragraph">
+      <h2>Examples</h2>
+      Use it without any options.
+      <code>&lt;clock-timepicker&gt;&lt;clock-timepicker&gt;</code>
+      <clock-timepicker></clock-timepicker>
+      <br /><br />
+      Use 12-hours format with am/pm.
+      <code>&lt;clock-timepicker required autosize format="h:mm"&gt;&lt;clock-timepicker&gt;</code>
+      <clock-timepicker required autosize format="h:mm" value="1:00pm"></clock-timepicker>
+      <br /><br />
+      Use another format to select seconds as well.
+      <code>&lt;clock-timepicker required autosize format="HH:mm:ss"&gt;&lt;clock-timepicker&gt;</code>
+      <clock-timepicker required autosize format="HH:mm:ss"></clock-timepicker>
+      <br /><br />
+      Set the precision to 15 minutes.
+      <code>&lt;clock-timepicker required precision="15"&gt;&lt;clock-timepicker&gt;</code>
+      <clock-timepicker required precision="15"></clock-timepicker>
+      <br /><br />
+      Only allow times between 00:00 and 08:00.
+      <code>&lt;clock-timepicker required minimum="00:00" maximum="08:00"&gt;&lt;clock-timepicker&gt;</code>
+      <clock-timepicker required minimum="00:00" maximum="08:00"></clock-timepicker>
+      <br /><br />
+      Use it as a duration picker to select duration between -10:00 and 120:00 hours.
+      <code>&lt;clock-timepicker required usePlusSign minimum="-10:00" maximum="120:00"&gt;&lt;clock-timepicker&gt;</code>
+      <clock-timepicker required usePlusSign value="10:00" minimum="-10:00" maximum="120:00"></clock-timepicker>
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      <h2>Help</h2>
+      Submit a <a href="https://github.com/loebi-ch/clock-timepicker/issues/new" target="_blank">GitHub Issues request</a>.
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      <h2>Changelog</h2>
+      <table>
+        <tr>
+          <th>Version 1.0.0</th>
+        </tr>
+        <tr>
+          <td style="max-width:600px">
+            <ul>
+              <li><a href="https://github.com/loebi-ch/jquery-clock-timepicker" target="_blank">jquery-clock-timepicker</a> completely refactored to work without jQuery as a modern standalone ES6 Web Component.</li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="spacer"></div>
+    <div class="paragraph">
+      This software is made available under the open source MIT license.<br />
+      <strong>clock-timepicker</strong> &copy; 2025 <a href="https://github.com/loebi-ch" target="_blank">Andreas Marc Loeber</a>
+    </div>
+  </div>
+</body>
+</html>
