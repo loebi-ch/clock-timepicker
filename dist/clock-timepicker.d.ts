@@ -1,5 +1,6 @@
 /**************************************************************************************
  * enum TimeFormat
+ * The available time formats that can be specified by using attribute "format"
  **************************************************************************************/
 export declare enum TimeFormat {
     'HH:mm' = "HH:mm",
@@ -23,6 +24,7 @@ export declare enum TimeFormat {
 }
 /**************************************************************************************
  * enum TimePart
+ * A time can consist of three different parts: Hour, Minute or Second
  **************************************************************************************/
 export declare enum TimePart {
     Hour = "Hour",
@@ -31,67 +33,49 @@ export declare enum TimePart {
 }
 /**************************************************************************************
  * class Time
+ * Represents a time consisting of hour, minute and second
  **************************************************************************************/
 export declare class Time {
-    readonly hour: number;
-    readonly minute: number;
-    readonly second: number;
+    readonly totalSeconds: number;
+    readonly isNegative: boolean;
+    get hour(): number;
+    get minute(): number;
+    get second(): number;
     static get Zero(): Time;
     static parse(timeAsString: string, timeFormat: TimeFormat): Time | undefined;
     private static getHour;
     private static getMinute;
     private static getSecond;
-    constructor(hour?: number, minute?: number, second?: number);
+    constructor(hour?: number, minute?: number, second?: number, isNegative?: boolean);
     getTimePart(timePart: TimePart): number;
     isZero(): boolean;
     equals(time: Time): boolean;
     isLessThan(time: Time): boolean;
     isGreaterThan(time: Time): boolean;
+    add(time: Time): Time;
+    subtract(time: Time): Time;
+    clone(): Time;
 }
-/**************************************************************************************
- * class ClockTimepickerConfiguration
- **************************************************************************************/
-export declare class ClockTimepickerConfiguration {
-    animationDuration: number;
-    autosize: boolean;
-    format: TimeFormat;
-    maximum: string;
-    minimum: string;
-    precision: number;
-    required: boolean;
-    separator: string;
-    usePlusSign: boolean;
-    vibrate: boolean;
-    onOpen: () => void;
-    onClose: () => void;
-    onTimePartChange: (timePart: TimePart) => void;
-    onChange: (time: Time) => void;
-    onAdjust: (time: Time) => void;
-}
-/**************************************************************************************
- * const DefaultClockTimepickerConfiguration
- **************************************************************************************/
-export declare const DefaultClockTimepickerConfiguration: ClockTimepickerConfiguration;
 /**************************************************************************************
  * class ClockTimepicker extends HTMLElement (Web Component)
  **************************************************************************************/
 export declare class ClockTimepicker extends HTMLElement {
-    constructor(configuration?: ClockTimepickerConfiguration | undefined);
-    get configuration(): ClockTimepickerConfiguration;
-    get input(): HTMLInputElement | undefined;
-    get time(): Time | undefined;
-    get scrollContainer(): HTMLElement;
-    static observedAttributes: string[];
-    attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
-    connectedCallback(): void;
-    disconnectedCallback(): void;
-    setTime(timeAsString: string): void;
-    setTimePart(timePart: TimePart, value: number, timePartToSelect?: TimePart | undefined): void;
-    selectTimePart(timePart: TimePart): void;
-    selectPreviousTimePart(): void;
-    selectNextTimePart(closeAfterLastTimePart?: boolean): void;
-    private _configuration;
+    private _animationDuration;
+    private _autosize;
+    private _cancelText;
+    private _disabled;
+    private _format;
+    private _maximum;
+    private _minimum;
+    private _okText;
+    private _precision;
+    private _required;
+    private _separator;
+    private _usePlusSign;
+    private _value;
+    private _vibrate;
     private _input;
+    private _inputObserver;
     private _scrollContainer;
     private _caretColorBefore;
     private _shadowRoot;
@@ -102,21 +86,74 @@ export declare class ClockTimepicker extends HTMLElement {
     private _footer;
     private _canvases;
     private _activeTimePart;
-    private _time;
     private _isSet;
-    private _enteredNumber;
+    private _enteredDigits;
+    /**************************************************************************************
+     * Getter and setters
+     **************************************************************************************/
+    get animationDuration(): number;
+    set animationDuration(value: number | string | undefined);
+    get autosize(): boolean;
+    set autosize(value: boolean | string | undefined);
+    get disabled(): boolean;
+    set disabled(value: boolean | string | undefined);
+    get format(): TimeFormat;
+    set format(value: TimeFormat | string | undefined);
+    get maximum(): Time;
+    set maximum(value: Time | string | undefined);
+    get minimum(): Time;
+    set minimum(value: Time | string | undefined);
+    get precision(): Time;
+    set precision(value: Time | string | number | undefined);
+    get required(): boolean;
+    set required(value: boolean | string | undefined);
+    get separator(): string;
+    set separator(value: string | undefined);
+    get usePlusSign(): boolean;
+    set usePlusSign(value: boolean | string | undefined);
+    get value(): string | undefined;
+    get time(): Time | undefined;
+    set value(value: Time | string | undefined);
+    get vibrate(): boolean;
+    set vibrate(value: boolean | string | undefined);
+    get input(): HTMLInputElement | undefined;
+    get scrollContainer(): HTMLElement;
+    /**************************************************************************************
+     * Web Component Life Cycle Hooks
+     **************************************************************************************/
+    static observedAttributes: string[];
+    attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    /**************************************************************************************
+     * Public methods
+     **************************************************************************************/
+    setTime(time: Time): void;
+    negateTime(): void;
+    setTimePart(timePart: TimePart, value: number): void;
+    selectTimePart(timePart?: TimePart | undefined): void;
+    selectPreviousTimePart(): void;
+    selectNextTimePart(closeAfterLastTimePart?: boolean): void;
+    /**************************************************************************************
+     * Event listeners
+     **************************************************************************************/
     private orientationChangeListener;
     private resizeListener;
     private scrollListener;
-    private clickListener;
-    private inputMouseDownListener;
+    private contextMenuListener;
+    private focusListener;
     private inputBlurListener;
+    private inputMouseDownListener;
     private inputKeyDownListener;
     private inputKeyUpListener;
+    /**************************************************************************************
+     * Private methods
+     **************************************************************************************/
     private getScrollContainer;
     private ok;
     private cancel;
     private getAvailableTimeParts;
+    private fireEvent;
     private showPopup;
     private hidePopup;
     private positionPopup;
