@@ -111,6 +111,8 @@ export declare class ClockTimepicker extends HTMLElement {
     set separator(value: string | undefined);
     get usePlusSign(): boolean;
     set usePlusSign(value: boolean | string | undefined);
+    private failedValueBecauseOfMinimum;
+    private failedValueBecauseOfMaximum;
     get value(): string | undefined;
     get time(): Time | undefined;
     set value(value: Time | string | undefined);

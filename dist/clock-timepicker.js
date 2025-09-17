@@ -146,7 +146,7 @@ export class Time {
         return this.totalSeconds == 0;
     }
     equals(time) {
-        return this.totalSeconds == time.totalSeconds;
+        return this.totalSeconds == time.totalSeconds && this.isNegative == time.isNegative;
     }
     isLessThan(time) {
         return this.totalSeconds < time.totalSeconds;
@@ -202,6 +202,10 @@ export class ClockTimepicker extends HTMLElement {
         this._activeTimePart = undefined;
         this._isSet = false;
         this._enteredDigits = undefined;
+        //value
+        //-------------------------------------------------------------------------------------
+        this.failedValueBecauseOfMinimum = undefined;
+        this.failedValueBecauseOfMaximum = undefined;
         /**************************************************************************************
          * Event listeners
          **************************************************************************************/
@@ -223,8 +227,11 @@ export class ClockTimepicker extends HTMLElement {
             var _a;
             if (!this._input)
                 return;
+            if (this.disabled)
+                return;
             this.selectTimePart((_a = this._activeTimePart) !== null && _a !== void 0 ? _a : this.getAvailableTimeParts()[0]);
             this.showPopup();
+            this.fireEvent('focus');
         };
         //INPUT.blur() listener
         //When loosing the focus, hide popup and remove selection
@@ -234,16 +241,17 @@ export class ClockTimepicker extends HTMLElement {
                 const selection = window.getSelection();
                 if ((selection === null || selection === void 0 ? void 0 : selection.anchorNode) == this)
                     selection.empty();
+                this.fireEvent('blur');
             });
         };
         //INPUT.mousedown() listener
         //Select clicked time part
         this.inputMouseDownListener = ($event) => {
-            if (!this.input)
-                return;
             $event.preventDefault();
             $event.stopImmediatePropagation();
             $event.stopPropagation();
+            if (this._disabled)
+                return;
             const clickedTimePart = this.getClickedTimePart($event);
             const availableTimeParts = this.getAvailableTimeParts();
             if (clickedTimePart == 'start')
@@ -414,6 +422,7 @@ export class ClockTimepicker extends HTMLElement {
             return;
         }
         this._animationDuration = value;
+        //console.log('SET', 'animationDuration', this._animationDuration);
     }
     //autosize
     //-------------------------------------------------------------------------------------
@@ -426,6 +435,7 @@ export class ClockTimepicker extends HTMLElement {
         else if (typeof value == 'string')
             value = !value.match(/^false$/i);
         this._autosize = value;
+        //console.log('SET', 'autosize', this._autosize);
     }
     //disabled
     //-------------------------------------------------------------------------------------
@@ -438,6 +448,16 @@ export class ClockTimepicker extends HTMLElement {
         else if (typeof value == 'string')
             value = !value.match(/^false$/i);
         this._disabled = value;
+        //console.log('SET', 'disabled', this._disabled);
+        if (!this._input)
+            return;
+        if (this._disabled) {
+            if (document.activeElement == this._input)
+                this.cancel();
+            this._input.style.cursor = 'default';
+        }
+        else
+            this._input.style.cursor = 'text';
     }
     //format
     //-------------------------------------------------------------------------------------
@@ -456,6 +476,7 @@ export class ClockTimepicker extends HTMLElement {
         }
         else
             this._format = value;
+        //console.log('SET', 'format', this._format);
     }
     //maximum
     //-------------------------------------------------------------------------------------
@@ -472,10 +493,16 @@ export class ClockTimepicker extends HTMLElement {
                 return;
             }
         }
-        if (value.isLessThan(this._minimum))
+        if (value.isLessThan(this._minimum)) {
             console.error('[clock-timepicker] Maximum cannot be less than minimum!');
-        else
-            this._maximum = value;
+            return;
+        }
+        this._maximum = value;
+        //console.log('SET', 'maximum', this._maximum);
+        if (this.failedValueBecauseOfMaximum) {
+            this.value = this.failedValueBecauseOfMaximum;
+            this.failedValueBecauseOfMaximum = undefined;
+        }
     }
     //minimum
     //-------------------------------------------------------------------------------------
@@ -492,10 +519,16 @@ export class ClockTimepicker extends HTMLElement {
                 return;
             }
         }
-        if (value.isGreaterThan(this._maximum))
+        if (value.isGreaterThan(this._maximum)) {
             console.error('[clock-timepicker] Minimum cannot be greater than maximum!');
-        else
-            this._minimum = value;
+            return;
+        }
+        this._minimum = value;
+        //console.log('SET', 'minimum', this._minimum);
+        if (this.failedValueBecauseOfMinimum) {
+            this.value = this.failedValueBecauseOfMinimum;
+            this.failedValueBecauseOfMinimum = undefined;
+        }
     }
     //precision
     //-------------------------------------------------------------------------------------
@@ -508,8 +541,10 @@ export class ClockTimepicker extends HTMLElement {
         else if (typeof value == 'number') {
             if (value < 1)
                 console.error('[clock-timepicker] Precision must be positive and greater than zero: ' + value + '!');
-            else
+            else {
                 this._precision = new Time(0, value, 0);
+                //console.log('SET', 'precision', this._precision);
+            }
         }
         else if (typeof value == 'string') {
             const time = Time.parse(value, this._format);
@@ -517,13 +552,17 @@ export class ClockTimepicker extends HTMLElement {
                 console.error('[clock-timepicker] Invalid precision specified: ' + value + '!');
             else if (time === null || time === void 0 ? void 0 : time.isLessThan(new Time(0, 0, 1)))
                 console.error('[clock-timepicker] Precision must be positive and greater than zero: ' + value + '!');
-            else
+            else {
                 this._precision = time;
+                //console.log('SET', 'precision', this._precision);
+            }
         }
         else if (value.isLessThan(new Time(0, 0, 1)))
             console.error('[clock-timepicker] Precision must be positive and greater than zero: ' + value + '!');
-        else
+        else {
             this._precision = value;
+            //console.log('SET', 'precision', this._precision);
+        }
     }
     //required
     //-------------------------------------------------------------------------------------
@@ -536,6 +575,7 @@ export class ClockTimepicker extends HTMLElement {
         else if (typeof value == 'string')
             value = !value.match(/^false$/i);
         this._required = value;
+        //console.log('SET', 'required', this._required);
     }
     //separator
     //-------------------------------------------------------------------------------------
@@ -550,6 +590,7 @@ export class ClockTimepicker extends HTMLElement {
             return;
         }
         this._separator = value;
+        //console.log('SET', 'separator', this._separator);
     }
     //usePlusSign
     //-------------------------------------------------------------------------------------
@@ -562,9 +603,8 @@ export class ClockTimepicker extends HTMLElement {
         else if (typeof value == 'string')
             value = !value.match(/^false$/i);
         this._usePlusSign = value;
+        //console.log('SET', 'usePlusSign', this._usePlusSign);
     }
-    //value
-    //-------------------------------------------------------------------------------------
     get value() {
         if (!this._value)
             return undefined;
@@ -581,17 +621,27 @@ export class ClockTimepicker extends HTMLElement {
         if (value == undefined)
             this._value = this.required ? this.minimum : undefined;
         else {
-            if (value.isLessThan(this.minimum))
-                this._value = this.minimum;
-            else if (value.isGreaterThan(this.maximum))
-                this._value = this.maximum;
-            else
+            if (value.isLessThan(this.minimum)) {
+                this.failedValueBecauseOfMinimum = value;
+                this._value = this.minimum.clone();
+                //console.log('SET', 'value', this._value, '[minimum]');
+            }
+            else if (value.isGreaterThan(this.maximum)) {
+                this.failedValueBecauseOfMaximum = value;
+                this._value = this.maximum.clone();
+                //console.log('SET', 'value', this._value, '[maximum]');
+            }
+            else {
                 this._value = value;
+                //console.log('SET', 'value', this._value);
+            }
             this._isSet = true;
         }
         if (this._input) {
             this._input.value = this.formatTime();
             this.autosizeInput();
+            if (document.activeElement == this._input)
+                this.selectTimePart();
         }
     }
     //vibrate
@@ -605,6 +655,7 @@ export class ClockTimepicker extends HTMLElement {
         else if (typeof value == 'string')
             value = !value.match(/^false$/i);
         this._vibrate = value;
+        //console.log('SET', 'vibrate', this._vibrate);
     }
     //Public access to input variable
     get input() {
@@ -663,17 +714,17 @@ export class ClockTimepicker extends HTMLElement {
         this._input = this.querySelector('input');
         if (!this._input) {
             this._input = document.createElement('input');
-            this._input.type = 'text';
-            this._input.spellcheck = false;
             this.appendChild(this._input);
-            if (!this._value && this.required)
-                this._value = this.minimum.clone();
-            this._input.value = this.formatTime();
         }
         else {
             if (this._input.value)
                 this.value = this._input.value;
+            if (this._input.disabled) {
+                this._input.disabled = false;
+                this.disabled = true;
+            }
             this._caretColorBefore = this._input.style.caretColor;
+            //Observe attribute changes of provided input element
             this._inputObserver = new MutationObserver(() => {
                 if (this._scrollContainer)
                     (this._scrollContainer == document.documentElement ? window : this._scrollContainer).removeEventListener('scroll', this.scrollListener);
@@ -681,15 +732,48 @@ export class ClockTimepicker extends HTMLElement {
                 (this._scrollContainer == document.documentElement ? window : this._scrollContainer).addEventListener('scroll', this.scrollListener);
             });
             this._inputObserver.observe(this._input, { attributes: true });
+            //Observe value property of provided input element
+            let inputValueDescriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this._input), 'value');
+            const _this = this;
+            Object.defineProperty(this._input, 'value', {
+                get: function () {
+                    var _a;
+                    return (_a = inputValueDescriptor === null || inputValueDescriptor === void 0 ? void 0 : inputValueDescriptor.get) === null || _a === void 0 ? void 0 : _a.apply(this);
+                },
+                set: function (value) {
+                    if (!(inputValueDescriptor === null || inputValueDescriptor === void 0 ? void 0 : inputValueDescriptor.set))
+                        return undefined;
+                    inputValueDescriptor.set.apply(this, [value]);
+                    if (_this.value != value)
+                        _this.value = value;
+                    return value;
+                }
+            });
+            //Observe disabled property of provided input element
+            Object.defineProperty(this._input, 'disabled', {
+                set: function (disabled) {
+                    _this.disabled = disabled;
+                    return _this.disabled;
+                }
+            });
         }
+        //Setting properties of input element
+        if (!this._value && this.required)
+            this._value = this.minimum.clone();
+        this._input.value = this.formatTime();
+        this._input.type = 'text';
+        this._input.spellcheck = false;
+        this._input.autocomplete = 'off';
         this._input.readOnly = true;
         this._input.style.caretColor = 'transparent';
+        //Register listeners on input element
         this._input.addEventListener('mousedown', this.inputMouseDownListener);
         this._input.addEventListener('focus', this.focusListener);
         this._input.addEventListener('blur', this.inputBlurListener);
         this._input.addEventListener('keydown', this.inputKeyDownListener);
         this._input.addEventListener('keyup', this.inputKeyUpListener);
         this._input.addEventListener('contextmenu', this.contextMenuListener);
+        //Autosize input
         this.autosizeInput();
         //Create shadow root element and add it
         this._shadowRoot = document.createElement('div');
@@ -865,7 +949,7 @@ export class ClockTimepicker extends HTMLElement {
      **************************************************************************************/
     //Set time of the timepicker
     setTime(time) {
-        if (!this._input)
+        if (!this._input || (this._value != undefined && time.equals(this._value)))
             return;
         if (time.isLessThan(this._minimum))
             this._value = this._minimum.clone();
@@ -932,6 +1016,12 @@ export class ClockTimepicker extends HTMLElement {
         if (timePart == undefined)
             timePart = this._activeTimePart;
         const canvas = this._canvases.find(t => t.timePart == timePart);
+        //If browser is not in focus, canvas is not available, so we blur the input element
+        if (!canvas) {
+            this._input.blur();
+            return;
+        }
+        //On first focus we directly show the canvas without animation
         if (!this._activeTimePart) {
             this._activeTimePart = timePart;
             for (let otherCanvas of this._canvases.filter(t => t.timePart != canvas.timePart)) {
@@ -943,14 +1033,18 @@ export class ClockTimepicker extends HTMLElement {
             canvas.element.style.transform = 'scale(1)';
             canvas.element.style.zIndex = '1';
         }
+        //Otherwise we show the animation to switch between different time parts
         else if (this._activeTimePart != timePart) {
             this._enteredDigits = undefined;
             (_a = this._canvases.find(t => t.timePart == this._activeTimePart)) === null || _a === void 0 ? void 0 : _a.element.animate([{ offset: 0, opacity: 1, transform: 'scale(1)', zIndex: 1 }, { offset: 1, opacity: 0, transform: 'scale(0.7)', zIndex: 0 }], { duration: this.animationDuration, fill: 'forwards' });
             this._activeTimePart = timePart;
             canvas.element.animate([{ offset: 0, opacity: 0, transform: 'scale(0.7)', zIndex: 0 }, { offset: 1, opacity: 1, transform: 'scale(1)', zIndex: 1 }], { duration: this.animationDuration, fill: 'forwards' });
         }
+        //Refresh the canvas
         canvas.refresh();
+        //Focus the input element
         this._input.focus();
+        //Select time part of input element
         const hourLength = this.formatTime(TimePart.Hour).length;
         const minuteLength = this.formatTime(TimePart.Minute).length;
         const secondLength = this.formatTime(TimePart.Second).length;
@@ -965,6 +1059,7 @@ export class ClockTimepicker extends HTMLElement {
                 this._input.setSelectionRange(hourLength + (hourLength ? 1 : 0) + minuteLength + (minuteLength ? 1 : 0), hourLength + (hourLength ? 1 : 0) + minuteLength + (minuteLength ? 1 : 0) + secondLength);
                 break;
         }
+        //Update the header (used in mobile version)
         this._header.innerHTML = '';
         const availableTimeParts = this.getAvailableTimeParts();
         for (let i = 0; i < availableTimeParts.length; i++) {
@@ -1047,7 +1142,10 @@ export class ClockTimepicker extends HTMLElement {
         if (!this._input)
             return;
         //console.log('ClockTimepicker.fireEvent(\'' + eventName + '\')');
-        this._input.dispatchEvent(new Event(eventName));
+        const event = new Event(eventName);
+        this.dispatchEvent(event);
+        if (eventName == 'change' || eventName == 'input')
+            this._input.dispatchEvent(event);
     }
     //Show the popup
     showPopup() {
@@ -1376,8 +1474,8 @@ class ClockCanvas {
                     const pageX = $event instanceof TouchEvent ? $event.touches[0].pageX : $event.pageX;
                     const pageY = $event instanceof TouchEvent ? $event.touches[0].pageY : $event.pageY;
                     const canvasPosition = this._canvas.getBoundingClientRect();
-                    const x = pageX - canvasPosition.left - this._clockTimepicker.scrollContainer.scrollLeft;
-                    const y = pageY - canvasPosition.top - this._clockTimepicker.scrollContainer.scrollTop;
+                    const x = pageX - canvasPosition.left /*- this._clockTimepicker.scrollContainer.scrollLeft*/;
+                    const y = pageY - canvasPosition.top /*- this._clockTimepicker.scrollContainer.scrollTop*/;
                     if (x >= this._canvas.offsetWidth / 2 - this._canvas.offsetWidth / 12 && x <= this._canvas.offsetWidth / 2 + this._canvas.offsetWidth / 12 && y >= this._canvas.offsetWidth / 2 - this._canvas.offsetWidth / 12 && y <= this._canvas.offsetWidth / 2 + this._canvas.offsetWidth / 12) {
                         this._clockTimepicker.negateTime();
                         this.refresh();

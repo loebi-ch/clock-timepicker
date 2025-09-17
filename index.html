@@ -152,7 +152,7 @@
   </style>
 </head>
 <body>
-  <h1>clock-timepicker 1.0.1</h1>
+  <h1>clock-timepicker 1.0.2</h1>
   <div class="content">
     <div class="paragraph">
       The <span class="code">&lt;clock-timepicker&gt;</span> is a simple and lightweight <em>Web Component</em> that allows you to pick a time or duration from a clock face. It is easy to use and <a href="#options">fully customizable</a>.<br /><br />
@@ -178,7 +178,7 @@
     <div class="spacer"></div>
     <div class="paragraph">
       <h2>TypeScript support</h2>
-      The <span class="code">&lt;clock-timepicker&gt;</span> publishes its type definitions so you can use it in TypeScript with strict types and auto completion.
+      The <span class="code">&lt;clock-timepicker&gt;</span> publishes its type definitions so you can use it in TypeScript with strict types and IDE auto completion.
     </div>
     <div class="spacer"></div>
     <div class="paragraph">
@@ -203,7 +203,7 @@
       <h2>Installation</h2>
       The <span class="code">&lt;clock-timepicker&gt;</span> can be easily installed from <a href="https://www.npmjs.com/package/clock-timepicker" target="_blank">NPM</a>:
       <code>npm install <strong>clock-timepicker</strong></code>
-      and then be imported it in your JavaScript file:
+      and then be imported in your JavaScript / TypeScript code:
       <code>import 'clock-timepicker';</code>
       <br /><br />
       You can also <a href="dist/clock-timepicker.js" target="_blank">download it</a> and directly reference it in your HTML file:<br />
@@ -226,6 +226,8 @@
       In certain frameworks (as Angular or React) it's sometimes necessary to use your own <span class="code">&lt;input&gt;</span> element,<br />which you can i.e. bind to a form or a reactive property.<br />
       In that case enclose your <span class="code">&lt;input&gt;</span> in the <span class="code">&lt;clock-timepicker&gt;</span> element:
       <code>&lt;clock-timepicker&gt;<br />&nbsp;&nbsp;&nbsp;<span class="code">&lt;input [(ngModel)]="value" /&gt;</span><br />&lt;clock-timepicker&gt;</code>
+      In Angular you also have the possibility to bind the <span class="code">ngModel</span> directly to the <span class="code">&lt;clock-timepicker&gt;</span> element, but you have to specify the <span class="code">ngDefaultControl</span> value accessor:
+      <code>&lt;clock-timepicker <span class="code">ngDefaultControl</span> [(ngModel)]="value"&gt;&lt;clock-timepicker&gt;</code>
     </div>
     <div class="spacer"></div>
     <a name="options"></a>
@@ -348,12 +350,20 @@
           <th>Description</th>
         </tr>
         <tr>
+          <td>blur</td>
+          <td>Fires when the timepicker looses the focus.</td>
+        </tr>
+        <tr>
           <td>change</td>
           <td>Fires when the popup is closed and the value has changed.</td>
         </tr>
         <tr>
+          <td>focus</td>
+          <td>Fires when the timepicker gains the focus.</td>
+        </tr>
+        <tr>
           <td>input</td>
-          <td>Fires on each change when the popup is opened.</td>
+          <td>Fires on each change as long the popup is opened.</td>
         </tr>
       </table>
     </div>
@@ -597,7 +607,7 @@
       <h2>Changelog</h2>
       <table>
         <tr>
-          <th>Version 1.0.1</th>
+          <th>Version 1.0</th>
         </tr>
         <tr>
           <td style="max-width:600px">
