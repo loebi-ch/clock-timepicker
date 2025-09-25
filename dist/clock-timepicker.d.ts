@@ -73,6 +73,7 @@ export declare class ClockTimepicker extends HTMLElement {
     private _separator;
     private _usePlusSign;
     private _value;
+    private _previousValue;
     private _vibrate;
     private _input;
     private _inputObserver;
@@ -116,6 +117,7 @@ export declare class ClockTimepicker extends HTMLElement {
     get value(): string | undefined;
     get time(): Time | undefined;
     set value(value: Time | string | undefined);
+    get previousValue(): string | undefined;
     get vibrate(): boolean;
     set vibrate(value: boolean | string | undefined);
     get input(): HTMLInputElement | undefined;
