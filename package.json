@@ -2,8 +2,19 @@
   "name": "clock-timepicker",
   "description": "A simple and lightweight Web Component that allows you to pick a time or duration from a clock face. It is easy to use and fully customizable.",
   "license": "MIT",
-  "author": "Andreas Marc Loeber",
-  "version": "1.0.4",
+  "author": {
+    "name": "Andreas Loeber",
+    "url": "https://github.com/loebi-ch"
+  },
+  "version": "1.0.5",
+  "keywords": [
+    "clock",
+    "time",
+    "picker",
+    "web",
+    "responsive",
+    "mobile"
+  ],
   "type": "module",
   "main": "./dist/clock-timepicker.js",
   "module": "./dist/clock-timepicker.js",
@@ -13,11 +24,11 @@
     "build": "tsc --build && terser ./dist/clock-timepicker.js --compress --mangle --module --output ./dist/clock-timepicker.js"
   },
   "devDependencies": {
-    "@types/node": "^24.5.2",
-    "@web/dev-server": "^0.4.6",
-    "concurrently": "^9.2.1",
-    "terser": "^5.44.0",
-    "typescript": "^5.9.2"
+    "@types/node": "24.9.1",
+    "@web/dev-server": "0.4.6",
+    "concurrently": "9.2.1",
+    "terser": "5.44.0",
+    "typescript": "5.9.3"
   },
   "customElements": "custom-elements.json",
   "-vs-binding": {
