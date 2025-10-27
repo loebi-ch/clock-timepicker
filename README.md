@@ -1,4 +1,4 @@
-clock-timepicker 1.0.4
+clock-timepicker 1.0.5
 ======================
 
 <img src="https://plugins.slyweb.ch/clock-timepicker/screenshot.png" alt="clock-timepicker screenshot" />
