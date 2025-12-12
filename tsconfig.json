@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "noEmitOnError": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "outDir": "dist",
+    "rootDir": "./",
+    "declaration": true,
+    "skipLibCheck": true
+  },
+  "include": ["*.ts"]
+}
